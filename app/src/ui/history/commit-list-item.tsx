@@ -19,6 +19,7 @@ interface ICommitProps {
   readonly isLocal: boolean
   readonly onRevertCommit?: (commit: Commit) => void
   readonly onViewCommitOnGitHub?: (sha: string) => void
+  readonly onCreateTag?: (targetCommitSha: string) => void
   readonly gitHubUsers: Map<string, IGitHubUser> | null
 }
 
@@ -97,6 +98,12 @@ export class CommitListItem extends React.Component<
     }
   }
 
+  private onCreateTag = () => {
+    if (this.props.onCreateTag) {
+      this.props.onCreateTag(this.props.commit.sha)
+    }
+  }
+
   private onContextMenu = (event: React.MouseEvent<any>) => {
     event.preventDefault()
 
@@ -119,6 +126,11 @@ export class CommitListItem extends React.Component<
           }
         },
         enabled: this.props.onRevertCommit !== undefined,
+      },
+      {
+        label: 'Create Tag…',
+        action: this.onCreateTag,
+        enabled: !!this.props.onCreateTag,
       },
       { type: 'separator' },
       {
